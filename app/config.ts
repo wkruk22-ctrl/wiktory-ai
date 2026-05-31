@@ -8,7 +8,7 @@ export const BRAND = {
     youtube: "https://www.youtube.com/@wiktory_ai",
     instagram: "https://www.instagram.com/wiktory.ai/",
     facebook: "https://www.facebook.com/profile.php?id=61590163330874",
-    skool: "https://www.skool.com/twoja-grupa", // PODMIEŃ
+    skool: "https://www.skool.com/wiktory-ai-3521",
   },
 } as const;
 
