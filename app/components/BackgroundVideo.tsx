@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 type Props = {
   src: string;
@@ -25,10 +25,23 @@ export default function BackgroundVideo({
   fadeBeforeEnd = 0.55,
   shifted = false,
 }: Props) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const fadingOutRef = useRef(false);
   const fadedInOnce = useRef(false);
+
+  // Ustaw `muted` synchronicznie w chwili montażu elementu — ZANIM przeglądarka
+  // zewaluuje autoplay. Naprawia bug Reacta przez który iOS blokuje autostart
+  // i wymaga dotknięcia ekranu.
+  const setVideoRef = useCallback((el: HTMLVideoElement | null) => {
+    if (el) {
+      el.muted = true;
+      el.defaultMuted = true;
+      el.setAttribute("muted", "");
+      el.setAttribute("playsinline", "");
+    }
+    videoRef.current = el;
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -150,6 +163,18 @@ export default function BackgroundVideo({
 
     if (video.readyState >= 1) startFadeIn();
 
+    // Kilka prób autostartu w pierwszej sekundzie — łapie moment, gdy wideo
+    // doładuje się na wolniejszym łączu mobilnym, bez czekania na dotyk ekranu
+    const retries = [120, 350, 700, 1200, 1800].map((ms) =>
+      setTimeout(() => {
+        if (video.paused) {
+          tryPlay()
+            .then(() => fadeTo(maxOpacity, fadeMs))
+            .catch(() => {});
+        }
+      }, ms)
+    );
+
     // Safety net — ale opacity ustawiamy TYLKO gdy play() faktycznie się uda
     const safety = setTimeout(() => {
       if (!fadedInOnce.current) {
@@ -165,6 +190,7 @@ export default function BackgroundVideo({
 
     return () => {
       clearTimeout(safety);
+      retries.forEach(clearTimeout);
       cancelFade();
       video.removeEventListener("loadedmetadata", startFadeIn);
       video.removeEventListener("loadeddata", startFadeIn);
@@ -181,7 +207,7 @@ export default function BackgroundVideo({
 
   return (
     <video
-      ref={videoRef}
+      ref={setVideoRef}
       src={src}
       autoPlay
       muted
