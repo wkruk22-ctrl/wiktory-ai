@@ -2,7 +2,7 @@ export const BRAND = {
   name: "wiktory.ai",
   fullName: "Wiktor",
   tagline: "Strony internetowe + nauka kodowania",
-  email: "wiktory.ai@wp.pl",
+  email: "wiktory.kontakt@gmail.com",
   social: {
     tiktok: "https://www.tiktok.com/@wiktory.ai",
     youtube: "https://www.youtube.com/@wiktory_ai",

@@ -19,7 +19,7 @@ export default function Skool() {
   return (
     <section id="dla-tworcow" className="relative overflow-hidden min-h-screen flex flex-col">
       {/* Subtelny vignette — wideo z layoutu widoczne */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/30 to-black/50 pointer-events-none" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/20 to-transparent pointer-events-none" />
 
       {/* Top nav: logo left, wstecz-link right */}
       <motion.div
@@ -48,7 +48,7 @@ export default function Skool() {
           transition={{ duration: 0.6 }}
           className="eyebrow mb-6"
         >
-          Społeczność na Skool
+          Kurs online + społeczność
         </motion.p>
 
         <motion.h2
@@ -89,7 +89,7 @@ export default function Skool() {
           <Metric icon={<Calendar size={14} />} label="Nowe lekcje co miesiąc" />
         </div>
 
-        {/* BIG Skool sign / link */}
+        {/* BIG CTA */}
         <motion.a
           href={BRAND.social.skool}
           target="_blank"
@@ -100,25 +100,30 @@ export default function Skool() {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="group mt-14 block liquid-glass rounded-3xl px-8 md:px-14 py-12 md:py-16 max-w-3xl mx-auto transition-all duration-500 hover:bg-white/[0.06] hover:scale-[1.015] shadow-[0_0_80px_-20px_rgba(255,255,255,0.2)]"
         >
-          <span className="text-[11px] tracking-[0.3em] uppercase text-white/40">
-            Dołącz do grupy
+          {/* platforma badge */}
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/8 border border-white/10 text-[11px] tracking-[0.2em] uppercase text-white/50">
+            Platforma Skool — darmowy dostęp
           </span>
-          <div className="mt-4 flex items-center justify-center gap-3 md:gap-4">
+
+          {/* główny tekst CTA */}
+          <div className="mt-5 flex items-center justify-center gap-3 md:gap-4">
             <span
               className="font-display italic text-white leading-none"
-              style={{ fontSize: "clamp(54px, 11vw, 120px)", letterSpacing: "-0.04em" }}
+              style={{ fontSize: "clamp(38px, 7vw, 80px)", letterSpacing: "-0.03em" }}
             >
-              Skool
+              Wejdź do Akademii
             </span>
             <ArrowUpRight
-              className="text-white/70 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300"
-              size={48}
+              className="text-white/70 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 shrink-0"
+              size={36}
               strokeWidth={1.5}
             />
           </div>
-          <span className="mt-5 inline-block text-[13px] md:text-sm text-white/55">
-            Kliknij, żeby zobaczyć grupę i dołączyć →
-          </span>
+
+          {/* opis */}
+          <p className="mt-4 text-[14px] md:text-[15px] text-white/55 leading-relaxed max-w-md mx-auto">
+            Kurs + społeczność + live sesje — wszystko w jednym miejscu. Rejestracja zajmuje 30 sekund.
+          </p>
         </motion.a>
 
         {/* Checklist below */}

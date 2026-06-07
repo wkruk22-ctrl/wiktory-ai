@@ -8,7 +8,6 @@ import Logo from "./Logo";
 export default function Gate() {
   return (
     <section className="relative h-screen w-screen overflow-hidden flex flex-col">
-      {/* Bardzo lekki vignette — tylko żeby karty miały kontrast, wideo dalej widać */}
       <div className="absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.5)_100%)] pointer-events-none" />
 
       {/* Logo top-left nav */}
@@ -24,33 +23,37 @@ export default function Gate() {
       {/* Center content */}
       <div className="relative z-20 flex-1 flex items-center justify-center px-5">
         <div className="w-full max-w-xl">
-          <motion.p
+          {/* Intro */}
+          <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-center text-[14px] md:text-[15px] text-white/55 leading-relaxed mb-10 md:mb-12"
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-center mb-10 md:mb-12"
           >
-            Dwie drogi. Wybierz tę, która<br />
-            sprowadziła Cię tutaj.
-          </motion.p>
+            <p className="text-[14px] md:text-[15px] text-white/55 leading-relaxed">
+              Cześć, jestem Wiktor. Robię strony internetowe{" "}
+              <br className="hidden sm:block" />
+              i uczę innych robić to samo.
+            </p>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
+            transition={{ duration: 0.9, delay: 0.6 }}
             className="space-y-3"
           >
             <GateCard
               eyebrow="Dla firm i twórców"
               title="Zrób mi stronę"
-              description="Zaprojektuję i zakoduję Ci stronę pod klucz. Bez kreatorów, bez szablonów."
+              description="Projektuję i koduję pod klucz. Bez kreatorów, bez szablonów. Strona gotowa w 1–3 tygodnie."
               href="/dla-biznesu"
               featured
             />
             <GateCard
               eyebrow="Dla początkujących"
-              title="Naucz się i zostań dev"
-              description="Społeczność na Skool, w której uczę robić strony i zarabiać."
+              title="Naucz się i zarabiaj"
+              description="Kurs online + społeczność. Od pierwszej linijki kodu do pierwszego klienta."
               href="/dla-tworcow"
             />
           </motion.div>

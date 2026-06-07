@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useMotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowLeft, Video, Phone, MoreVertical, Check } from "lucide-react";
 
 type Msg = { side: "in" | "out"; text: string; time: string };
@@ -104,11 +103,9 @@ const chats: Chat[] = [
 ];
 
 export default function Dowody() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-
   return (
-    <section ref={sectionRef} className="relative overflow-hidden">
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-black/35 to-black/50 pointer-events-none" />
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-black/30 to-black/55 pointer-events-none" />
 
       <div className="relative z-20 mx-auto max-w-7xl px-5 md:px-8 py-24 md:py-32">
         <div className="text-center max-w-2xl mx-auto">
@@ -154,7 +151,7 @@ export default function Dowody() {
 
         <div className="mt-16 columns-1 sm:columns-2 lg:columns-3 gap-5 [column-fill:_balance]">
           {chats.map((c, i) => (
-            <ChatCard key={c.title} chat={c} index={i} constraintRef={sectionRef} />
+            <ChatCard key={c.title} chat={c} index={i} />
           ))}
         </div>
       </div>
@@ -162,30 +159,8 @@ export default function Dowody() {
   );
 }
 
-const STORAGE_KEY = "dowody-positions";
-
-function getSavedPositions(): Record<string, { x: number; y: number }> {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function ChatCard({ chat, index, constraintRef }: { chat: Chat; index: number; constraintRef: React.RefObject<HTMLElement | null> }) {
-  const [dragging, setDragging] = useState(false);
+function ChatCard({ chat, index }: { chat: Chat; index: number }) {
   const sentBg = chat.platform === "imessage" ? "bg-[#0a84ff]" : "bg-[#005c4b]";
-
-  const saved = getSavedPositions()[chat.title] ?? { x: 0, y: 0 };
-  const x = useMotionValue(saved.x);
-  const y = useMotionValue(saved.y);
-
-  function savePosition() {
-    const positions = getSavedPositions();
-    positions[chat.title] = { x: x.get(), y: y.get() };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
-  }
 
   return (
     <motion.div
@@ -197,31 +172,9 @@ function ChatCard({ chat, index, constraintRef }: { chat: Chat; index: number; c
         delay: (index % 3) * 0.1,
         ease: [0.23, 1, 0.32, 1],
       }}
-      drag
-      dragConstraints={constraintRef}
-      dragElastic={0.12}
-      dragMomentum={false}
-      dragTransition={{ bounceStiffness: 280, bounceDamping: 24 }}
-      style={{ x, y, cursor: dragging ? "grabbing" : "grab", position: "relative" }}
-      onDragStart={() => setDragging(true)}
-      onDragEnd={() => { setDragging(false); savePosition(); }}
-      whileDrag={{ scale: 1.06, zIndex: 50 }}
-      className="mb-5 break-inside-avoid select-none"
+      className="mb-5 break-inside-avoid"
     >
-      <motion.div
-        animate={dragging ? { y: 0 } : { y: [0, -6, 0] }}
-        transition={dragging ? {} : {
-          duration: 6 + index,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          boxShadow: dragging
-            ? "0 40px 100px -20px rgba(0,0,0,0.85), 0 0 40px -10px rgba(255,255,255,0.08)"
-            : undefined,
-        }}
-        className="rounded-[26px] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] ring-1 ring-white/10 transition-shadow duration-300"
-      >
+      <div className="rounded-[26px] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
         {/* Header */}
         <div className="flex items-center gap-3 bg-[#202c33] px-3.5 py-2.5">
           <ArrowLeft size={18} className="text-[#aebac1] shrink-0" strokeWidth={2} />
@@ -276,7 +229,7 @@ function ChatCard({ chat, index, constraintRef }: { chat: Chat; index: number; c
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

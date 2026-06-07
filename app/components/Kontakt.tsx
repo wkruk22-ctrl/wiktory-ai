@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Check, Mail, Send } from "lucide-react";
+import { Instagram, Check, Mail, Send, AlertCircle } from "lucide-react";
 import { BRAND } from "../config";
 
 type FormData = {
   name: string;
   email: string;
-  company?: string;
   budget: string;
   message: string;
 };
@@ -18,12 +17,12 @@ const budgets = [
   "Do 3 000 zł",
   "3 000 – 7 000 zł",
   "7 000 – 15 000 zł",
-  "Powyżej 15 000 zł",
   "Jeszcze nie wiem",
 ];
 
 export default function Kontakt() {
   const [submitted, setSubmitted] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const {
     register,
     handleSubmit,
@@ -32,22 +31,26 @@ export default function Kontakt() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    // Placeholder: mailto fallback. Podmień na własne API / Formspree / Resend.
-    const subject = encodeURIComponent(`Nowe zapytanie od ${data.name}`);
-    const body = encodeURIComponent(
-      `Imię: ${data.name}\nEmail: ${data.email}\nFirma: ${data.company || "—"}\nBudżet: ${data.budget}\n\n${data.message}`
-    );
-    window.location.href = `mailto:${BRAND.email}?subject=${subject}&body=${body}`;
-    setSubmitted(true);
-    setTimeout(() => {
+    setServerError(false);
+    try {
+      const res = await fetch("/api/kontakt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("send failed");
+
+      setSubmitted(true);
       reset();
-      setSubmitted(false);
-    }, 4000);
+      setTimeout(() => setSubmitted(false), 6000);
+    } catch {
+      setServerError(true);
+    }
   };
 
   return (
     <section id="kontakt" className="relative overflow-hidden">
-      {/* Subtelny gradient — wideo z layoutu widoczne */}
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/35 via-black/25 to-black/45 pointer-events-none" />
 
       <div className="relative z-20 mx-auto max-w-6xl px-5 md:px-8 py-24 md:py-32">
@@ -98,46 +101,23 @@ export default function Kontakt() {
               </a>
 
               <a
-                href={BRAND.social.tiktok}
+                href={BRAND.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 group"
               >
                 <span className="size-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
-                  <ArrowUpRight size={16} strokeWidth={1.5} />
+                  <Instagram size={16} strokeWidth={1.5} />
                 </span>
                 <div>
                   <p className="text-[10px] tracking-[0.2em] uppercase text-white/40">
-                    TikTok
+                    Instagram
                   </p>
                   <p className="text-[15px] text-white/90 group-hover:text-white">
                     @wiktory.ai
                   </p>
                 </div>
               </a>
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-white/10">
-              <p className="text-[11px] tracking-[0.18em] uppercase text-white/40 mb-3">
-                Najczęściej robię
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Landing page",
-                  "Strona firmowa",
-                  "Portfolio",
-                  "One-pager",
-                  "E-commerce",
-                  "Funnel",
-                ].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1.5 rounded-full liquid-glass text-[12px] text-white/75"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
             </div>
           </motion.div>
 
@@ -182,17 +162,6 @@ export default function Kontakt() {
             />
 
             <Field
-              label="Firma / projekt (opcjonalnie)"
-              input={
-                <input
-                  {...register("company")}
-                  placeholder="Nazwa Twojej firmy"
-                  className="input-style"
-                />
-              }
-            />
-
-            <Field
               label="Orientacyjny budżet"
               error={errors.budget?.message}
               input={
@@ -229,6 +198,13 @@ export default function Kontakt() {
               }
             />
 
+            {serverError && (
+              <div className="flex items-center gap-2 text-[13px] text-rose-400/90 px-1">
+                <AlertCircle size={14} strokeWidth={2} />
+                Coś poszło nie tak. Napisz bezpośrednio na {BRAND.email}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={isSubmitting || submitted}
@@ -237,8 +213,10 @@ export default function Kontakt() {
               {submitted ? (
                 <>
                   <Check size={16} strokeWidth={2.5} />
-                  Wysłane — sprawdź skrzynkę
+                  Wysłane — odezwę się w 24h
                 </>
+              ) : isSubmitting ? (
+                <>Wysyłam…</>
               ) : (
                 <>
                   Wyślij zapytanie

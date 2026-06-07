@@ -28,7 +28,7 @@ const cols = [
       { label: "Instagram", href: BRAND.social.instagram },
       { label: "YouTube", href: BRAND.social.youtube },
       { label: "Facebook", href: BRAND.social.facebook },
-      { label: "Polityka prywatności", href: "#" },
+      { label: "Polityka prywatności", href: "/polityka-prywatnosci" },
     ],
   },
 ];
